@@ -78,7 +78,7 @@ export default function CollectionRecords() {
   const openDeleteConfirmModal = (row: any) =>
     modals.openConfirmModal({
       centered: true,
-      title: 'Are you sure you want to delete this record?',
+      title: <Text fw={700}>Are you sure you want to delete this record?</Text>,
       children: (
         <Text>
           Are you sure you want to delete <b>{row.id}</b>? This action cannot be undone.
@@ -118,7 +118,7 @@ export default function CollectionRecords() {
                 <Table.Th style={{ width: "10%" }}>Actions</Table.Th>
               </Table.Tr>
             </Table.Thead>
-            <Table.Tbody style={{ paddingBottom: "100px" }}>{rows.map((row) => (
+            <Table.Tbody>{rows.map((row) => (
               <Table.Tr style={{ cursor: "pointer" }} key={row.id} onClick={() => {
                 setRecordViewItem(row)
                 viewRecordOpen()
@@ -129,7 +129,8 @@ export default function CollectionRecords() {
                 <Table.Td>
                   <Flex gap="md">
                     <Tooltip label="Edit">
-                      <ActionIcon variant="transparent" size="sm" onClick={() => {
+                      <ActionIcon variant="transparent" size="sm" onClick={(e) => {
+                        e.stopPropagation()
                         updateForm.setInitialValues({
                           id: row.id,
                           document: row.document,
@@ -146,7 +147,10 @@ export default function CollectionRecords() {
                       </ActionIcon>
                     </Tooltip>
                     <Tooltip label="Delete">
-                      <ActionIcon variant="transparent" size="sm" color="red" onClick={() => openDeleteConfirmModal(row)}>
+                      <ActionIcon variant="transparent" size="sm" color="red" onClick={(e) => {
+                        e.stopPropagation()
+                        openDeleteConfirmModal(row)
+                      }}>
                         <IconTrash />
                       </ActionIcon>
                     </Tooltip>
@@ -188,7 +192,7 @@ export default function CollectionRecords() {
           </Group>
         </Box>
 
-        <Modal opened={viewRecordOpened} onClose={viewRecordClose} title={<span style={{ fontWeight: 700 }}>View Record</span>} centered>
+        <Modal opened={viewRecordOpened} onClose={viewRecordClose} title={<Text fw={700}>View Record</Text>} centered>
           <TextInput
             disabled
             label="ID"
@@ -228,7 +232,7 @@ export default function CollectionRecords() {
             value={recordViewItem?.metadata || ""} />
         </Modal>
 
-        <Modal opened={addRecordOpened} onClose={addRecordClose} title={<span style={{ fontWeight: 700 }}>Add Record</span>} centered>
+        <Modal opened={addRecordOpened} onClose={addRecordClose} title={<Text fw={700}>Add Record</Text>} centered>
           <form onSubmit={addForm.onSubmit((values) => {
             let record: any = {
               "ids": [values.id],
@@ -277,7 +281,7 @@ export default function CollectionRecords() {
           </form>
         </Modal>
 
-        <Modal opened={updateRecordOpened} onClose={updateRecordClose} title={<span style={{ fontWeight: 700 }}>Edit Record</span>} centered>
+        <Modal opened={updateRecordOpened} onClose={updateRecordClose} title={<Text fw={700}>Edit Record</Text>} centered>
           <form onSubmit={updateForm.onSubmit((values) => {
             let record: any = {
               "ids": [values.id],
