@@ -3,14 +3,13 @@ import { useSearchParams } from "next/navigation"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 const keys = {
-  getVersion: ["version"],
   getCollections: ["collections"],
 }
 
 export function useGetVersion(url?: string) {
   return useQuery({
     enabled: !!url,
-    queryKey: keys.getVersion,
+    queryKey: ["version", url],
     queryFn: async () => {
       const resp = await fetch(`${url}/api/v1/version`)
       return resp.json()
@@ -22,7 +21,7 @@ export function useGetTableVersion() {
   const [url] = useLocalStorage({ key: 'url' })
   return useQuery({
     enabled: !!url,
-    queryKey: keys.getVersion,
+    queryKey: ["version", url],
     queryFn: async () => {
       const resp = await fetch(`${url}/api/v1/version`)
       return resp.json()

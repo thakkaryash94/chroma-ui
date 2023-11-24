@@ -9,15 +9,9 @@ import CollectionSidebar from './components/CollectionSidebar'
 import CollectionRecords from './components/CollectionRecords'
 
 export default function HomePage() {
-  const [value, setValue] = useLocalStorage({ key: 'url' })
+  const [url, setURL] = useLocalStorage({ key: 'url' })
   const [localURL, setLocalURL] = useState<string | undefined>()
   const { data, isLoading, refetch, error } = useGetVersion(localURL)
-
-  useEffect(() => {
-    if (data && localURL) {
-      setValue(localURL)
-    }
-  }, [data, localURL, setValue])
 
   const form = useForm({
     initialValues: {
@@ -29,12 +23,14 @@ export default function HomePage() {
   })
 
   useEffect(() => {
-    if (error) {
-      form.setFieldError('url', ' ')
+    if (data && localURL) {
+      setURL(localURL)
+      setLocalURL("")
+      form.reset()
     }
-  }, [error])
+  }, [data, form, localURL, setURL])
 
-  if (value) {
+  if (url) {
     return (
       <Flex
         h="100vh"
