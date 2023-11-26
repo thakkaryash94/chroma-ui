@@ -4,8 +4,8 @@ import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useDisclosure, useLocalStorage } from '@mantine/hooks'
-import { IconPlugConnectedX, IconPlus, IconTrash } from '@tabler/icons-react'
-import { Group, Code, Button, Modal, TextInput, Tooltip, ActionIcon, NavLink } from '@mantine/core'
+import { IconPlugConnectedX, IconPlus, IconRefresh, IconTrash } from '@tabler/icons-react'
+import { Group, Code, Button, Modal, TextInput, Tooltip, ActionIcon, NavLink, Text } from '@mantine/core'
 import { useAddCollection, useDeleteCollection, useGetCollections } from '../../hooks'
 import classes from './index.module.css'
 
@@ -31,7 +31,7 @@ export default function Navbar() {
       name: (value) => (/^(?!.*\.\.)[a-zA-Z0-9](?:[a-zA-Z0-9_-]{1,61}[a-zA-Z0-9])?$/.test(value) ? null : "Expected collection name that (1) contains 3-63 characters, (2) starts and ends with an alphanumeric character, (3) otherwise contains only alphanumeric characters, underscores or hyphens (-), (4) contains no two consecutive periods (..) and (5) is not a valid IPv4 address"),
     },
   })
-  const { isPending, error, data } = useGetCollections()
+  const { isPending, error, data, refetch } = useGetCollections()
   const { mutateAsync: addCollectionMutationAsync } = useAddCollection()
 
   const { mutateAsync: deleteCollectionMutationAsync } = useDeleteCollection()
@@ -47,9 +47,18 @@ export default function Navbar() {
           Logo
           <Code fw={700}>v0.0.1</Code>
         </Group>
-        <Button leftSection={<IconPlus size={14} />} variant="light" fullWidth onClick={createCollectionOpen}>
-          Create Collection
-        </Button>
+        <Group gap={4}>
+          <Tooltip label="Create Collection">
+            <ActionIcon onClick={createCollectionOpen}>
+              <IconPlus />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Refresh">
+            <ActionIcon onClick={() => { refetch() }}>
+              <IconRefresh />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
         <br />
         {data && Array.isArray(data) && data.map((collection: Collection) => (
           <NavLink
@@ -102,7 +111,7 @@ export default function Navbar() {
           }}>Yes</Button>
         </Group>
       </Modal>
-      <Modal opened={createCollectionOpened} onClose={createCollectionClose} title={<span style={{ fontWeight: 700 }}>Create Collection</span>} centered>
+      <Modal opened={createCollectionOpened} onClose={createCollectionClose} title={<Text fw={700} size='xl'>Create Collection</Text>} centered>
         <form onSubmit={form.onSubmit((values) => {
           addCollectionMutationAsync(values).then(() => {
             notifications.show({
