@@ -6,7 +6,7 @@ import { modals } from "@mantine/modals"
 import { useDisclosure } from "@mantine/hooks"
 import { notifications } from "@mantine/notifications"
 import { useRouter, useSearchParams } from "next/navigation"
-import { IconEdit, IconTablePlus, IconTableShortcut, IconTrash } from "@tabler/icons-react"
+import { IconEdit, IconRefresh, IconTablePlus, IconTableShortcut, IconTrash } from "@tabler/icons-react"
 import { ActionIcon, Box, Button, Center, Code, Flex, Group, Modal, Pagination, Select, Table, Text, TextInput, Textarea, Tooltip, rem } from "@mantine/core"
 import { useAddRecord, useGetRecordsCount, useGetRecords, useUpdateRecord, useDeleteRecord, useGetTableVersion } from "../../hooks"
 import { isValidJSON, validateRequired } from "../../utils"
@@ -37,7 +37,7 @@ export default function CollectionRecords() {
       metadata: ''
     },
     validate: {
-      id: (value) => !validateRequired(value) ? 'ID is Required' : '',
+      id: (value) => validateRequired(value) ? null : 'ID is Required',
       metadata: (value) => {
         if (value) {
           if (isValidJSON(value)) {
@@ -66,7 +66,7 @@ export default function CollectionRecords() {
       }
     }
   })
-  const { data: rows = [], isFetching, isError, isLoading } = useGetRecords()
+  const { data: rows = [], isFetching, isError, isLoading, refetch } = useGetRecords()
   const { data: versionData } = useGetTableVersion()
 
   const { mutateAsync: mutateAddAsync } = useAddRecord()
@@ -78,7 +78,7 @@ export default function CollectionRecords() {
   const openDeleteConfirmModal = (row: any) =>
     modals.openConfirmModal({
       centered: true,
-      title: <Text fw={700}>Are you sure you want to delete this record?</Text>,
+      title: <Text fw={700} size='xl'>Are you sure you want to delete this record?</Text>,
       children: (
         <Text>
           Are you sure you want to delete <b>{row.id}</b>? This action cannot be undone.
@@ -164,6 +164,7 @@ export default function CollectionRecords() {
         <Box style={{ position: "fixed", padding: "8px", bottom: 0, width: "100%", backgroundColor: "white" }}>
           <Group gap={8}>
             <Button leftSection={<IconTablePlus stroke={1.3} />} onClick={addRecordOpen}>Add Record</Button>
+            <Button leftSection={<IconRefresh stroke={1.3} />} onClick={() => { refetch() }}>Refresh</Button>
             <Select
               defaultValue={limit}
               allowDeselect={false}
@@ -192,7 +193,7 @@ export default function CollectionRecords() {
           </Group>
         </Box>
 
-        <Modal opened={viewRecordOpened} onClose={viewRecordClose} title={<Text fw={700}>View Record</Text>} centered>
+        <Modal opened={viewRecordOpened} onClose={viewRecordClose} title={<Text fw={700} size='xl'>View Record</Text>} centered size="xl">
           <TextInput
             disabled
             label="ID"
@@ -232,7 +233,7 @@ export default function CollectionRecords() {
             value={recordViewItem?.metadata || ""} />
         </Modal>
 
-        <Modal opened={addRecordOpened} onClose={addRecordClose} title={<Text fw={700}>Add Record</Text>} centered>
+        <Modal opened={addRecordOpened} onClose={addRecordClose} title={<Text fw={700} size='xl'>Add Record</Text>} centered>
           <form onSubmit={addForm.onSubmit((values) => {
             let record: any = {
               "ids": [values.id],
@@ -281,7 +282,7 @@ export default function CollectionRecords() {
           </form>
         </Modal>
 
-        <Modal opened={updateRecordOpened} onClose={updateRecordClose} title={<Text fw={700}>Edit Record</Text>} centered>
+        <Modal opened={updateRecordOpened} onClose={updateRecordClose} title={<Text fw={700} size='xl'>Edit Record</Text>} centered size="xl">
           <form onSubmit={updateForm.onSubmit((values) => {
             let record: any = {
               "ids": [values.id],
