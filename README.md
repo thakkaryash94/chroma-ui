@@ -2,6 +2,14 @@
 
 This is not an official project. Initially, I developed this for myself because it was getting difficult for me check the collections and records through code and APIs can be overwhelming as I am used to access the database using GUI tools like DBeaver, MongoDB Compass etc. So here, I have open sourced it in case someone also feeling the same. It is also hosted at https://chroma-ui.vercel.app and source code is hosted at https://github.com/thakkaryash94/chroma-ui.
 
+
+## Screenshots
+- List
+![List](./images/list.png)
+- Edit
+![List](./images/edit.png)
+
+
 ## Use
 
 There are 2 ways to use the tool.
