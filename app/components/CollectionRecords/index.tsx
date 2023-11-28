@@ -163,8 +163,12 @@ export default function CollectionRecords() {
         <br /><br />
         <Box style={{ position: "fixed", padding: "8px", bottom: 0, width: "100%", backgroundColor: "white" }}>
           <Group gap={8}>
-            <Button leftSection={<IconTablePlus stroke={1.3} />} onClick={addRecordOpen}>Add Record</Button>
-            <Button leftSection={<IconRefresh stroke={1.3} />} onClick={() => { refetch() }}>Refresh</Button>
+            <Tooltip label="Add Record">
+              <ActionIcon variant="outline" onClick={addRecordOpen}><IconTablePlus stroke={1.3} /></ActionIcon>
+            </Tooltip>
+            <Tooltip label="Refresh">
+              <ActionIcon variant="outline" onClick={() => { refetch() }}><IconRefresh stroke={1.3} /></ActionIcon>
+            </Tooltip>
             <Select
               defaultValue={limit}
               allowDeselect={false}
@@ -175,6 +179,7 @@ export default function CollectionRecords() {
               }}
             />
             <Pagination.Root
+              siblings={1}
               total={Math.ceil(rowCount / Number.parseInt(limit))}
               defaultValue={page}
               getItemProps={(page) => ({
@@ -189,6 +194,7 @@ export default function CollectionRecords() {
                 <Pagination.Last component={Link} href={`?collection-id=${collectionId}&page=${Math.ceil(rowCount / Number.parseInt(limit))}&limit=${limit}`} />
               </Group>
             </Pagination.Root>
+            <Text fw={700}>Total: {rowCount}</Text>
             <Code fw={700}>DB Version:{versionData}</Code>
           </Group>
         </Box>

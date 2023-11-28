@@ -91,14 +91,12 @@ export default function Navbar() {
           <Button color="red" onClick={() => {
             if (deleteCollectionId) {
               deleteCollectionMutationAsync(deleteCollectionId).then(() => {
-                if (deleteCollectionId === collectionId) {
-                  router.push('/')
-                }
                 notifications.show({
                   color: "green",
                   title: "Success",
                   message: "Collection deleted",
                 })
+                router.push('/')
                 deleteCollectionClose()
               }).catch((err) => {
                 notifications.show({
