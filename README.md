@@ -16,6 +16,9 @@ There are 2 ways to use the tool.
 1. You can go to https://chroma-ui.vercel.app and enter your Chroma DB UI URL. Note: It will work only with live URLs and won't work for localhost(127.0.0.1).
 2. If you want to use it for local development, follow setup steps.
 
+## Desktop Client
+
+You can build the desktop client and run it. Run `npm run tauri build` and it will build the appropriate output files under `src-tauri/target/release/bundle/` folder.
 
 ## Setup
 
