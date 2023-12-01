@@ -30,13 +30,20 @@ export function useGetTableVersion() {
 }
 
 export function useGetCollections(options?: any) {
-  const [url] = useLocalStorage({ key: 'url' })
+  const [url, setURL, removeURL] = useLocalStorage({ key: 'url' })
   return useQuery({
     enabled: !!url,
     queryKey: keys.getCollections,
     queryFn: async () => {
-      const resp = await fetch(`${url}/api/v1/collections`)
-      return resp.json()
+      try {
+        const resp = await fetch(`${url}/api/v1/collections`)
+        if (resp.ok === false) {
+          removeURL()
+        }
+        return resp.json()
+      } catch {
+        removeURL()
+      }
     }
   })
 }
