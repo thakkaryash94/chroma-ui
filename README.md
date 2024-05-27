@@ -31,7 +31,7 @@ This project is built using NextJS, React, Mantine. You don't need familiarity w
 3. Run `npm run dev` to start the application
 OR
 3. Run `npm run build` to build the project
-4. Run `npm run start` to run the application
+4. Run `npx serve@latest out` to run the application
 
 
 ## Help Links
