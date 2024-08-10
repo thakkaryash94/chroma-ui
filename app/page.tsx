@@ -1,6 +1,6 @@
 'use client'
 import { useForm } from '@mantine/form'
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useLocalStorage } from '@mantine/hooks'
 import { IconAlertTriangleFilled, IconBrandGithub } from '@tabler/icons-react'
 import { Alert, Box, Button, Card, Center, Flex, Group, LoadingOverlay, TextInput, Title } from '@mantine/core'
@@ -14,19 +14,13 @@ export default function HomePage() {
   const [tenant, setTenant] = useLocalStorage({ key: 'tenant' })
   const [dbname, setDbName] = useLocalStorage({ key: 'dbname' })
 
-  const [localURL, setLocalURL] = useState<string | undefined>()
-  const [localTenant, setLocalTenant] = useState<string | undefined>()
-  const [localDBname, setLocalDBname] = useState<string | undefined>()
-
-  const { data, isLoading, refetch, error } = useGetVersion(localURL)
-
-  console.log({ tenant, dbname })
+  const { data, isLoading, refetch, error } = useGetVersion(url)
 
   const form = useForm({
     initialValues: {
       url: 'http://127.0.0.1:8000',
-      tenant: '',
-      dbname: ''
+      tenant: 'default_tenant',
+      dbname: 'default_database'
     },
     validate: {
       url: (value) => (/(https?:\/\/.*):(\d*)\/?(.*)/.test(value) ? null : 'Invalid URL'),
@@ -36,22 +30,27 @@ export default function HomePage() {
   })
 
   useEffect(() => {
-    if (data && localURL && localTenant && localDBname) {
-      setURL(localURL)
-      setTenant(localTenant)
-      setDbName(localDBname)
-      setLocalURL("")
-      setLocalTenant("")
-      setLocalDBname("")
-      form.reset()
-    }
-  }, [
-    data, form, 
-    localURL, localTenant, localDBname, 
-    setURL, setTenant, setDbName
-  ])
+    form.setValues({ url, tenant, dbname, })
+  },[ url, tenant, dbname ])
 
-  if (url && tenant && dbname) {
+  useEffect(() => { url && refetch() },[ url ])
+
+  const [ submitted, setSubmitted ] = useState(false)
+  function onSubmit(){
+    return form.onSubmit((values) => {
+      setSubmitted(true)
+      setURL(values.url)
+      setTenant(values.tenant)
+      setDbName(values.dbname)
+    })
+  }
+
+  const [ ok, setOk ] = useState(false)
+  useEffect(() => {
+    setOk(submitted && data && !isLoading)
+  },[ data, isLoading, submitted ])
+
+  if (ok) {
     return (
       <Flex
         h="100vh"
@@ -78,14 +77,7 @@ export default function HomePage() {
             <Title order={1}>New Connection</Title>
             <br />
             <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-            <form style={{ minWidth: "260px" }} autoComplete="off" onSubmit={form.onSubmit((values) => {
-              setLocalURL(previous => {
-                if (previous) { refetch() }
-                return values.url
-              })
-              setLocalTenant(values.tenant)
-              setLocalDBname(values.dbname)
-            })}>
+            <form style={{ minWidth: "260px" }} autoComplete="off" onSubmit={onSubmit()}>
               <TextInput
                 withAsterisk
                 label="Connection URL"
