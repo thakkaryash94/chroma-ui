@@ -23,6 +23,9 @@ export default function Navbar() {
   const search = useSearchParams()
   const collectionId = search.get("collection-id")
   const [url, setURL, removeURL] = useLocalStorage({ key: 'url' })
+  const [tenant, setTenant, removeTenant] = useLocalStorage({ key: 'tenant' })
+  const [dbname, setDbName, removeDbName] = useLocalStorage({ key: 'dbname' })
+
   const form = useForm({
     initialValues: {
       name: ""
@@ -81,6 +84,8 @@ export default function Navbar() {
       <div className={classes.footer}>
         <Button variant="subtle" fullWidth leftSection={<IconPlugConnectedX />} onClick={() => {
           removeURL()
+          removeTenant()
+          removeDbName()
           router.push("/")
         }}>Disconnect</Button>
       </div>

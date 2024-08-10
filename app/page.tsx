@@ -11,27 +11,47 @@ import Link from 'next/link'
 
 export default function HomePage() {
   const [url, setURL] = useLocalStorage({ key: 'url' })
+  const [tenant, setTenant] = useLocalStorage({ key: 'tenant' })
+  const [dbname, setDbName] = useLocalStorage({ key: 'dbname' })
+
   const [localURL, setLocalURL] = useState<string | undefined>()
+  const [localTenant, setLocalTenant] = useState<string | undefined>()
+  const [localDBname, setLocalDBname] = useState<string | undefined>()
+
   const { data, isLoading, refetch, error } = useGetVersion(localURL)
+
+  console.log({ tenant, dbname })
 
   const form = useForm({
     initialValues: {
-      url: '',
+      url: 'http://127.0.0.1:8000',
+      tenant: '',
+      dbname: ''
     },
     validate: {
       url: (value) => (/(https?:\/\/.*):(\d*)\/?(.*)/.test(value) ? null : 'Invalid URL'),
+      tenant: value => !!value ? null : 'Invalid value',
+      dbname: value => !!value ? null : 'Invalid value',
     },
   })
 
   useEffect(() => {
-    if (data && localURL) {
+    if (data && localURL && localTenant && localDBname) {
       setURL(localURL)
+      setTenant(localTenant)
+      setDbName(localDBname)
       setLocalURL("")
+      setLocalTenant("")
+      setLocalDBname("")
       form.reset()
     }
-  }, [data, form, localURL, setURL])
+  }, [
+    data, form, 
+    localURL, localTenant, localDBname, 
+    setURL, setTenant, setDbName
+  ])
 
-  if (url) {
+  if (url && tenant && dbname) {
     return (
       <Flex
         h="100vh"
@@ -60,17 +80,31 @@ export default function HomePage() {
             <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
             <form style={{ minWidth: "260px" }} autoComplete="off" onSubmit={form.onSubmit((values) => {
               setLocalURL(previous => {
-                if (previous) {
-                  refetch()
-                }
+                if (previous) { refetch() }
                 return values.url
               })
+              setLocalTenant(values.tenant)
+              setLocalDBname(values.dbname)
             })}>
               <TextInput
                 withAsterisk
                 label="Connection URL"
                 placeholder="http://127.0.0.1:8000"
                 {...form.getInputProps('url')}
+              />
+              <br />
+              <TextInput
+                withAsterisk
+                label="Tenant"
+                placeholder="default_tenant"
+                {...form.getInputProps('tenant')}
+              />
+              <br />
+              <TextInput
+                withAsterisk
+                label="DB Name"
+                placeholder="default_database"
+                {...form.getInputProps('dbname')}
               />
               {error && <Alert mt={16} variant="light" color="red" title={error?.message} icon={<IconAlertTriangleFilled />} />}
               <Group justify="flex-end" mt="md">
