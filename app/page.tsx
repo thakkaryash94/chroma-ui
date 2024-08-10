@@ -30,7 +30,8 @@ export default function HomePage() {
   })
 
   useEffect(() => {
-    form.setValues({ url, tenant, dbname, })
+    if(url && tenant && dbname)
+      form.setValues({ url, tenant, dbname, })
   },[ url, tenant, dbname ])
 
   useEffect(() => { url && refetch() },[ url ])
