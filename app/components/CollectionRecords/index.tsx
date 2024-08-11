@@ -161,7 +161,7 @@ export default function CollectionRecords() {
           </Table>
         </Table.ScrollContainer>
         <br /><br />
-        <Box style={{ position: "fixed", padding: "8px", bottom: 0, width: "100%", backgroundColor: "white" }}>
+        <Box style={{ position: "fixed", padding: "8px", bottom: 0, width: "100%", backgroundColor: "var(--mantine-color-body)" }}>
           <Group gap={8}>
             <Tooltip label="Add Record">
               <ActionIcon variant="outline" onClick={addRecordOpen}><IconTablePlus stroke={1.3} /></ActionIcon>

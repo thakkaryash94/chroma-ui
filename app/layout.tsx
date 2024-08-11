@@ -42,7 +42,10 @@ export default function RootLayout({ children }: { children: any }) {
       </head>
       <body style={{ minHeight: "100vh" }}>
         <QueryClientProvider client={queryClient}>
-          <MantineProvider theme={theme}>
+          <MantineProvider 
+            theme={theme}
+            defaultColorScheme={"auto"}
+          >
             <Notifications />
             <ModalsProvider>
               {children}

@@ -31,18 +31,25 @@ export function useGetTableVersion() {
 
 export function useGetCollections(options?: any) {
   const [url, setURL, removeURL] = useLocalStorage({ key: 'url' })
+  const [tenant, setTenant, removeTenant] = useLocalStorage({ key: 'tenant' })
+  const [database, setDbName, removeDbName] = useLocalStorage({ key: 'dbname' })
+  const connQueryString = new URLSearchParams({ tenant, database }).toString()
   return useQuery({
     enabled: !!url,
     queryKey: keys.getCollections,
     queryFn: async () => {
       try {
-        const resp = await fetch(`${url}/api/v1/collections`)
+        const resp = await fetch(`${url}/api/v1/collections?${connQueryString}`)
         if (resp.ok === false) {
           removeURL()
+          removeTenant()
+          removeDbName()
         }
         return resp.json()
       } catch {
         removeURL()
+        removeTenant()
+        removeDbName()
       }
     }
   })
@@ -50,10 +57,13 @@ export function useGetCollections(options?: any) {
 
 export function useAddCollection(options?: any) {
   const [url] = useLocalStorage({ key: 'url' })
+  const [tenant, setTenant, removeTenant] = useLocalStorage({ key: 'tenant' })
+  const [database, setDbName, removeDbName] = useLocalStorage({ key: 'dbname' })
+  const connQueryString = new URLSearchParams({ tenant, database }).toString()
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (data: any) => {
-      const resp = await fetch(`${url}/api/v1/collections`, {
+      const resp = await fetch(`${url}/api/v1/collections?${connQueryString}`, {
         method: 'POST',
         headers: {
           "Content-Type": "application/json"
@@ -74,10 +84,13 @@ export function useAddCollection(options?: any) {
 
 export function useDeleteCollection(options?: any) {
   const [url] = useLocalStorage({ key: 'url' })
+  const [tenant, setTenant, removeTenant] = useLocalStorage({ key: 'tenant' })
+  const [database, setDbName, removeDbName] = useLocalStorage({ key: 'dbname' })
+  const connQueryString = new URLSearchParams({ tenant, database }).toString()
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (collectionName: string) => {
-      const resp = await fetch(`${url}/api/v1/collections/${collectionName}`, {
+      const resp = await fetch(`${url}/api/v1/collections/${collectionName}?${connQueryString}`, {
         method: 'DELETE'
       })
       return resp.json()
